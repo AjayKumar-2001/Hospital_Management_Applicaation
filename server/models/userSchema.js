@@ -76,5 +76,4 @@ Userschema.methods.generateJsonWebToken = function() {
         expiresIn: process.env.JWT_EXPIRES,
     });
 };
-
-export const User = mongoose.model("User", Userschema);
+export const UserData = mongoose.model("User", Userschema);

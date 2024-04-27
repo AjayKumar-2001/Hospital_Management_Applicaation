@@ -1,6 +1,6 @@
 import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../middlewares/errorMiddleware.js";
-import { User } from "../models/userschema.js";
+import { UserData } from "../models/userschema.js";
 import { generateToken } from "../utils/jwtToken.js";
 import cloudinary from "cloudinary";
 export const patientRegister = catchAsyncErrors(async (req, res, next) => {
@@ -28,11 +28,11 @@ export const patientRegister = catchAsyncErrors(async (req, res, next) => {
   ) {
     return next(new ErrorHandler("Please Fill Full Form", 400));
   }
-  let user = await User.findOne({ email });
+  let user = await UserData.findOne({ email });
   if (user) {
     return next(new ErrorHandler("User already Registered", 400));
   }
-  user = await User.create({
+  user = await UserData.create({
     firstName,
     lastName,
     email,
@@ -56,7 +56,7 @@ export const login = catchAsyncErrors(async (req, res, next) => {
       new ErrorHandler("Password And Confirm Password do not match!", 400)
     );
   }
-  const user = await User.findOne({ email }).select("+password");
+  const user = await UserData.findOne({ email }).select("+password");
   if (!user) {
     return next(new ErrorHandler("Invalid Password Or Email", 400));
   }
@@ -85,7 +85,7 @@ export const addNewAdmin = catchAsyncErrors(async (req, res, next) => {
   ) {
     return next(new ErrorHandler("Please Fill Full Form", 400));
   }
-  const isRegistered = await User.findOne({ email });
+  const isRegistered = await UserData.findOne({ email });
   if (isRegistered) {
     return next(
       new ErrorHandler(
@@ -93,7 +93,7 @@ export const addNewAdmin = catchAsyncErrors(async (req, res, next) => {
       )
     );
   }
-  const admin = await User.create({
+  const admin = await UserData.create({
     firstName,
     lastName,
     email,
@@ -111,7 +111,7 @@ export const addNewAdmin = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getallDoctors = catchAsyncErrors(async (req, res, next) => {
-  const doctors = await User.find({ role: "Doctor" });
+  const doctors = await UserData.find({ role: "Doctor" });
   res.status(200).json({
     success: true,
     doctors,
@@ -186,7 +186,7 @@ export const addNewDoctor = catchAsyncErrors(async (req, res, next) => {
   ) {
     return next(new ErrorHandler("Please Provide Full Details!", 400));
   }
-  const isRegistered = await User.findOne({ email });
+  const isRegistered = await UserData.findOne({ email });
   if (isRegistered) {
     return next(
       new ErrorHandler(
@@ -204,7 +204,7 @@ export const addNewDoctor = catchAsyncErrors(async (req, res, next) => {
       cloudinaryResponse.error || "Unknown Cloudinary Error"
     );
   }
-  const doctor = await User.create({
+  const doctor = await UserData.create({
     firstName,
     lastName,
     email,
